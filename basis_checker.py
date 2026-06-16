@@ -30,7 +30,7 @@ def get_dim(m, n):
         dim = math.floor(2/3*(n + m - 1))
     else:
         dim = n - 1
-        
+
 
 # Get the dimensions of the grid and draw it 
 def submit():
@@ -45,8 +45,24 @@ def submit():
     draw_grid(m_var.get(), n_var.get())
 
 # Validates if the tokens placed are a metric basis or not
-def validate_basis():
+# m, n >= 2 
+# (a) there is at most one empty row and at most one empty column
+# (b) there is at most one lonely vertex, and
+# (c) if there is an empty row and an empty column, then there is no lonely vertex.
+def validate_basis(matrix, tokens):
     print("CHECKING BASIS")
+    empty_cols = 0
+    empty_rows = 0
+    lonely_vert = 0
+
+    # count number of empty cols and rows
+    for col in len(matrix[0]):  
+        if (matrix[:, col] == 0).all():
+            empty_cols += 1
+    for row in len(matrix):
+        if (matrix[row, :] == 0).all():
+            empty_rows += 1
+    
 
 # Draw the n x m grid by displaying rectangles
 def draw_grid(m, n):
@@ -88,7 +104,7 @@ def place_token(row, col):
     cell_y = y_offset + row * CELL_SIZE + CELL_SIZE //2
     r = CELL_SIZE //3
 
-    C.create_oval(cell_x - r, cell_y - r, cell_x + r, cell_y + r, fill="red" )
+    C.create_oval(cell_x - r, cell_y - r, cell_x + r, cell_y + r, fill="light blue" )
     tokens.append((row, col))
     matrix[row][col] = 1
 
