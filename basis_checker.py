@@ -68,18 +68,7 @@ def validate_basis():
         if (matrix[row, :] == 0).all():
             empty_rows += 1
     
-    # check lonely vertex
-    xFreq = {}
-    yFreq = {}
-    for x,y in tokens:
-        xFreq[x] = xFreq.get(x,0) +1
-        yFreq[y] = yFreq.get(y,0)+1
-    
-    for x,y in tokens:
-        if xFreq[x] ==1 and yFreq[y] == 1:
-            lonely_vert+=1
-    #print(xFreq,yFreq)
-    #print(lonely_vert)
+
     if empty_cols > 1 or empty_rows > 1 or (empty_cols == 1 and empty_rows ==1 and lonely_vert >0) or lonely_vert >1:
         print("NOT VALID")
         return 
@@ -138,5 +127,6 @@ m_entry = tk.Entry(sidebar, textvariable = m_var, width = 5).grid(row=1, column=
 sub_btn=tk.Button(sidebar, text = 'Submit', command = submit).grid(row=2, column=0, columnspan=2, pady=10)
 C.bind("<Button-1>", get_cell)
 
+global matrix 
 valid_btn = tk.Button(sidebar, text = 'Validate Basis', command = validate_basis).grid(row=3, column=0, columnspan=2, pady=10)
 root.mainloop()
