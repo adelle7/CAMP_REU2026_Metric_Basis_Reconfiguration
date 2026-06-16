@@ -50,7 +50,7 @@ def submit():
 # (a) there is at most one empty row and at most one empty column
 # (b) there is at most one lonely vertex, and
 # (c) if there is an empty row and an empty column, then there is no lonely vertex.
-def validate_basis(matrix, tokens):
+def validate_basis():
     print("CHECKING BASIS")
     empty_cols = 0
     empty_rows = 0
@@ -62,14 +62,30 @@ def validate_basis(matrix, tokens):
     lonely_vert = sum(1 for x, y in tokens if x_counts[x] == 1 and y_counts[y] == 1)
 
     # count number of empty cols and rows
-    for col in range(matrix[0]):  
+    for col in range(len(matrix[0])):  
         if (matrix[:, col] == 0).all():
             empty_cols += 1
-    for row in range(matrix):
+    for row in range (len(matrix)):
         if (matrix[row, :] == 0).all():
             empty_rows += 1
     
-
+    #check lonley vertex
+    xFreq = {}
+    yFreq = {}
+    for x,y in tokens:
+        xFreq[x] = xFreq.get(x,0) +1
+        yFreq[y] = yFreq.get(y,0)+1
+    
+    for x,y in tokens:
+        if xFreq[x] ==1 and yFreq[y] == 1:
+            lonely_vert+=1
+    #print(xFreq,yFreq)
+    #print(lonely_vert)
+    if empty_cols > 1 or empty_rows > 1 or (empty_cols == 1 and empty_rows ==1 and lonely_vert >0) or lonely_vert >1:
+        print("NOT VALID")
+        return 
+    else:
+        print("VALID")
 # Draw the n x m grid by displaying rectangles
 def draw_grid(m, n):
     global  x_offset, y_offset
