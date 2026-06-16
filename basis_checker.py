@@ -1,5 +1,6 @@
 import numpy as np
 import math
+from collections import Counter
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
@@ -55,11 +56,16 @@ def validate_basis(matrix, tokens):
     empty_rows = 0
     lonely_vert = 0
 
+    # count number of lonely vertices
+    x_counts = Counter(x for x, y in tokens)
+    y_counts = Counter(y for x, y in tokens)
+    lonely_vert = sum(1 for x, y in tokens if x_counts[x] == 1 and y_counts[y] == 1)
+
     # count number of empty cols and rows
-    for col in len(matrix[0]):  
+    for col in range(matrix[0]):  
         if (matrix[:, col] == 0).all():
             empty_cols += 1
-    for row in len(matrix):
+    for row in range(matrix):
         if (matrix[row, :] == 0).all():
             empty_rows += 1
     
@@ -89,15 +95,12 @@ def get_cell(event):
     if 0 <= col < n_var.get() and 0 <= row < m_var.get():
         place_token(row, col)
 
-
 # places a token in the specified row and col 
 def place_token(row, col):
     if (row, col) in tokens: # check that the same cell isn't clicked again
         return
     
-    if len(tokens) >= dim :
-        print("Matrix with tokens: ")
-        print(matrix)
+    if len(tokens) >= dim :    # maximum num of tokens has been placed
         return
     
     cell_x = x_offset + col * CELL_SIZE + CELL_SIZE //2
@@ -118,5 +121,6 @@ m_entry = tk.Entry(sidebar, textvariable = m_var, width = 5).grid(row=1, column=
 sub_btn=tk.Button(sidebar, text = 'Submit', command = submit).grid(row=2, column=0, columnspan=2, pady=10)
 C.bind("<Button-1>", get_cell)
 
-valid_btn = tk.Button(sidebar, text = 'Validate Basis', command = validate_basis).grid(row=3, column=0, columnspan=2, pady=10)
+global matrix 
+valid_btn = tk.Button(sidebar, text = 'Validate Basis', command = lambda: validate_basis(matrix, tokens)).grid(row=3, column=0, columnspan=2, pady=10)
 root.mainloop()
