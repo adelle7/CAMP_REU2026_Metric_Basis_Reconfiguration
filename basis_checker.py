@@ -71,7 +71,6 @@ def validate_basis():
 
     if empty_cols > 1 or empty_rows > 1 or (empty_cols == 1 and empty_rows ==1 and lonely_vert >0) or lonely_vert >1:
         print("NOT VALID")
-        return 
     else:
         print("VALID")
 
