@@ -163,6 +163,14 @@ def on_release(event):
     else:
         matrix[w._row][w._col] = 0
         matrix[new_row][new_col] = 1
+        tokens.remove((w._row, w._col))
+        tokens.append((new_row,new_col))
+        cell_x = x_offset + new_col * CELL_SIZE + CELL_SIZE //2
+        cell_y = y_offset + new_row * CELL_SIZE + CELL_SIZE //2
+        r = CELL_SIZE //3
+        C.coords(w._clicked_id, cell_x - r, cell_y - r, cell_x + r, cell_y + r)
+        w._clicked_id = -1
+        validate_basis()
         
         
 
