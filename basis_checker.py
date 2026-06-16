@@ -69,7 +69,7 @@ def validate_basis():
         if (matrix[row, :] == 0).all():
             empty_rows += 1
     
-    #check lonley vertex
+    # check lonely vertex
     xFreq = {}
     yFreq = {}
     for x,y in tokens:
@@ -86,6 +86,8 @@ def validate_basis():
         return 
     else:
         print("VALID")
+
+
 # Draw the n x m grid by displaying rectangles
 def draw_grid(m, n):
     global  x_offset, y_offset
@@ -138,5 +140,5 @@ sub_btn=tk.Button(sidebar, text = 'Submit', command = submit).grid(row=2, column
 C.bind("<Button-1>", get_cell)
 
 global matrix 
-valid_btn = tk.Button(sidebar, text = 'Validate Basis', command = lambda: validate_basis(matrix, tokens)).grid(row=3, column=0, columnspan=2, pady=10)
+valid_btn = tk.Button(sidebar, text = 'Validate Basis', command = lambda: validate_basis).grid(row=3, column=0, columnspan=2, pady=10)
 root.mainloop()
