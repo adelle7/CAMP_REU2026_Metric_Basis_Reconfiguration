@@ -32,7 +32,6 @@ def get_dim(m, n):
     else:
         dim = n - 1
 
-
 # Get the dimensions of the grid and draw it 
 def submit():
     global matrix, tokens
@@ -41,7 +40,7 @@ def submit():
     n = n_var.get()
     tokens = [] # initialize token array that stores coordinates of each token
     matrix = np.zeros((m, n), dtype=int) # initialize empty matrix
-    print(matrix)
+    #print(matrix)
     get_dim(m, n)
     draw_grid(m_var.get(), n_var.get())
 
@@ -139,6 +138,5 @@ m_entry = tk.Entry(sidebar, textvariable = m_var, width = 5).grid(row=1, column=
 sub_btn=tk.Button(sidebar, text = 'Submit', command = submit).grid(row=2, column=0, columnspan=2, pady=10)
 C.bind("<Button-1>", get_cell)
 
-global matrix 
-valid_btn = tk.Button(sidebar, text = 'Validate Basis', command = lambda: validate_basis).grid(row=3, column=0, columnspan=2, pady=10)
+valid_btn = tk.Button(sidebar, text = 'Validate Basis', command = validate_basis).grid(row=3, column=0, columnspan=2, pady=10)
 root.mainloop()
