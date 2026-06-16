@@ -107,14 +107,71 @@ def place_token(row, col):
     
     if len(tokens) >= dim :    # maximum num of tokens has been placed
         return
+    elif len(tokens) == dim - 1:
+        #Make draggable
+        C.bind("<Button-1>", on_drag_start)
+        C.bind("<B1-Motion>", on_drag)
+        C.bind("<ButtonRelease-1>", on_release)
     
     cell_x = x_offset + col * CELL_SIZE + CELL_SIZE //2
     cell_y = y_offset + row * CELL_SIZE + CELL_SIZE //2
     r = CELL_SIZE //3
 
     C.create_oval(cell_x - r, cell_y - r, cell_x + r, cell_y + r, fill="light blue" )
+
     tokens.append((row, col))
     matrix[row][col] = 1
+
+#gets starting position when first trying to drag
+def on_drag_start(event):
+    w = event.widget
+    if (len(C.find_withtag("current")) == 0):
+        return
+    item = C.find_withtag("current")[0]
+    if (C.type(item) != "oval"):
+        w._clicked_id = -1
+        return
+    w._clicked_id = item
+    w._col = round((event.x - x_offset - CELL_SIZE // 2) / CELL_SIZE)
+    w._row = round((event.y - y_offset - CELL_SIZE // 2) / CELL_SIZE)
+    print(w._col)
+    print(w._row)
+
+#has the token track mouse movement
+def on_drag(event):
+    w = event.widget
+    if (w._clicked_id == -1):
+        return
+    r = CELL_SIZE // 3
+    C.coords(w._clicked_id, event.x - r, event.y - r, event.x + r, event.y + r)
+
+def on_release(event):
+    w = event.widget
+    if (w._clicked_id == -1):
+        return
+    new_col = round((event.x - x_offset - CELL_SIZE // 2) / CELL_SIZE)
+    new_row = round((event.y - y_offset - CELL_SIZE // 2) / CELL_SIZE)
+    if (new_col != w._col and new_row != w._row) or (matrix[new_row][new_col] == 1):
+        print("pls help")
+        cell_x = x_offset + w._col * CELL_SIZE + CELL_SIZE //2
+        cell_y = y_offset + w._row * CELL_SIZE + CELL_SIZE //2
+        r = CELL_SIZE //3
+        C.coords(w._clicked_id, cell_x - r, cell_y - r, cell_x + r, cell_y + r)
+        w._clicked_id = -1
+    else:
+        matrix[w._row][w._col] = 0
+        matrix[new_row][new_col] = 1
+        tokens.remove((w._row, w._col))
+        tokens.append((new_row,new_col))
+        cell_x = x_offset + new_col * CELL_SIZE + CELL_SIZE //2
+        cell_y = y_offset + new_row * CELL_SIZE + CELL_SIZE //2
+        r = CELL_SIZE //3
+        C.coords(w._clicked_id, cell_x - r, cell_y - r, cell_x + r, cell_y + r)
+        w._clicked_id = -1
+        validate_basis()
+        
+        
+
 
 # get n and m entries on sidebar
 n_label = tk.Label(sidebar, text = "n (columns, must be >= m): ").grid(row=0, column=0)
