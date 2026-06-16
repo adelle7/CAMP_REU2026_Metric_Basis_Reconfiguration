@@ -105,8 +105,44 @@ def place_token(row, col):
     r = CELL_SIZE //3
 
     C.create_oval(cell_x - r, cell_y - r, cell_x + r, cell_y + r, fill="light blue" )
+    #Make draggable
+    C.bind("<Button-1>", on_drag_start)
+    C.bind("<B1-Motion>", on_drag)
+    C.bind("<ButtonRelease-1>", on_release)
+
     tokens.append((row, col))
     matrix[row][col] = 1
+
+#gets starting position when first trying to drag
+def on_drag_start(event):
+    w = event.widget
+    w._clicked_id = C.find_withtag("current")[0]
+    w._col = round((event.x - x_offset - CELL_SIZE // 2) / CELL_SIZE)
+    w._row = round((event.y - y_offset - CELL_SIZE // 2) / CELL_SIZE)
+    print(w._col)
+    print(w._row)
+
+#has the token track mouse movement
+def on_drag(event):
+    w = event.widget
+    r = CELL_SIZE // 3
+    C.coords(w._clicked_id, event.x - r, event.y - r, event.x + r, event.y + r)
+
+def on_release(event):
+    w = event.widget
+    new_col = round((event.x - x_offset - CELL_SIZE // 2) / CELL_SIZE)
+    new_row = round((event.y - y_offset - CELL_SIZE // 2) / CELL_SIZE)
+    if (matrix[new_row][new_col] == 1):
+        cell_x = x_offset + w._col * CELL_SIZE + CELL_SIZE //2
+        cell_y = y_offset + w._row * CELL_SIZE + CELL_SIZE //2
+        r = CELL_SIZE //3
+        C.coords(w._clicked_id, cell_x - r, cell_y - r, cell_x + r, cell_y + r)
+    else:
+        simulated = matrix.copy()
+        simulated[w._row][w._col] = 0
+        simulated[new_row][new_col] = 1
+        
+
 
 # get n and m entries on sidebar
 n_label = tk.Label(sidebar, text = "n (columns, must be >= m): ").grid(row=0, column=0)
