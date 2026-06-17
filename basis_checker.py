@@ -109,10 +109,12 @@ def get_cell(event):
     col = min(col, n_var.get()- 1)
     row = (event.y - y_offset) //CELL_SIZE
     row = min(row, m_var.get() - 1)
+    
+    if high_state.get() == 1:
+        highlight(event.x_root,event.y_root)
 
-    if 0 <= col < n_var.get() and 0 <= row < m_var.get():
+    if (0 <= col < n_var.get() and 0 <= row < m_var.get()) and high_state.get()== 0:
         place_token(row, col)
-
 # places a token in the specified row and col 
 def place_token(row, col):
     if (row, col) in tokens: # check that the same cell isn't clicked again
@@ -137,21 +139,24 @@ def place_token(row, col):
 
 # gets starting position when first trying to drag
 def on_drag_start(event):
-    w = event.widget
-    if (len(C.find_withtag("current")) == 0):
-        return
-    item = C.find_withtag("current")[0]
+    if high_state.get() == 1:
+        highlight(event.x_root,event.y_root)
+    else:
+        w = event.widget
+        if (len(C.find_withtag("current")) == 0):
+            return
+        item = C.find_withtag("current")[0]
 
-    if (C.type(item) != "oval"):
-        w._clicked_id = -1
-        return
-    
-    w._clicked_id = item
-    w._col = round((event.x - x_offset - CELL_SIZE // 2) / CELL_SIZE)
-    w._row = round((event.y - y_offset - CELL_SIZE // 2) / CELL_SIZE)
+        if (C.type(item) != "oval"):
+            w._clicked_id = -1
+            return
+        
+        w._clicked_id = item
+        w._col = round((event.x - x_offset - CELL_SIZE // 2) / CELL_SIZE)
+        w._row = round((event.y - y_offset - CELL_SIZE // 2) / CELL_SIZE)
 
-    print("column: ", w._col + 1)
-    print("row: ", w._row + 1)
+        print("column: ", w._col + 1)
+        print("row: ", w._row + 1)
 
 # has the token track mouse movement
 def on_drag(event):
@@ -188,13 +193,25 @@ def on_release(event):
         w._clicked_id = -1
         validate_basis()
 
-
+def highlight(x,y):
+    print("oiujwefoijwegoij")
+    print(x,y)
+    rect = C.find_closest(x,y-(CELL_SIZE))[0]
+    item_type = C.type(rect)
+    item_tags = C.gettags(rect)
+    print(rect,item_tags,item_type)
+    if item_type == 'rectangle':
+        C.itemconfig(rect,fill="white") if C.itemcget(rect, "fill") == 'yellow' else C.itemconfig(rect,fill="yellow")
+            
 # get n and m entries on sidebar
 n_label = tk.Label(sidebar, text = "n (columns, must be >= m): ").grid(row=0, column=0)
 n_entry = tk.Entry(sidebar, textvariable = n_var, width = 5).grid(row=0, column=1, sticky="w")
 
 m_label = tk.Label(sidebar, text = "m (rows, must be >= 1): ").grid(row=1, column=0)
 m_entry = tk.Entry(sidebar, textvariable = m_var, width = 5).grid(row=1, column=1, sticky="w")
+
+high_state = tk.IntVar()
+highlight_btn = tk.Checkbutton(sidebar, text = "Highlight",variable=high_state,onvalue=1,offvalue=0).grid(row = 4, column=0, columnspan = 2, pady=10)
 
 sub_btn=tk.Button(sidebar, text = 'Submit', command = submit).grid(row=2, column=0, columnspan=2, pady=10)
 C.bind("<Button-1>", get_cell)
