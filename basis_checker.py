@@ -20,7 +20,7 @@ n_var = tk.IntVar() # number of columns
 m_var = tk.IntVar() # number of rows
 x_offset = 0
 y_offset = 0
-CELL_SIZE = 80
+CELL_SIZE = 70
 dim = 0     # dimension = number of tokens that can be placed
 
 # Calculate the dimension, the number of tokens we can place 
@@ -35,12 +35,19 @@ def get_dim(m, n):
 # Get the dimensions of the grid and draw it 
 def submit():
     global matrix, tokens
+
+    # reset everything
     C.delete("all")
+    C._clicked_id = -1
+    C.bind("<Button-1>", get_cell)
+    C.unbind("<B1-Motion>")
+    C.unbind("<ButtonRelease-1>")
+    tk.Label(sidebar, text="                   ", font=("Arial", 20)).grid(row=5, column=0, columnspan=2, pady=10)
+
     m = m_var.get()
     n = n_var.get()
-    tokens = [] # initialize token array that stores coordinates of each token
+    tokens = [] # initialize or reset token array that stores coordinates of each token
     matrix = np.zeros((m, n), dtype=int) # initialize empty matrix
-    #print(matrix)
     get_dim(m, n)
     draw_grid(m_var.get(), n_var.get())
 
@@ -68,10 +75,16 @@ def validate_basis():
         if (matrix[row, :] == 0).all():
             empty_rows += 1
     
+    not_valid_label = tk.Label(sidebar, text="NOT VALID", font=("Arial", 20), fg="red")
+    valid_label = tk.Label(sidebar, text="      VALID       ", font=("Arial", 20), fg="green")
 
     if empty_cols > 1 or empty_rows > 1 or (empty_cols == 1 and empty_rows ==1 and lonely_vert >0) or lonely_vert >1:
+        not_valid_label.grid(row=5, column=0, columnspan=2, pady=10)
+        valid_label.grid_forget()
         print("NOT VALID")
     else:
+        valid_label.grid(row=5, column=0, columnspan=2, pady=10)
+        not_valid_label.grid_forget()
         print("VALID")
 
 
@@ -88,7 +101,7 @@ def draw_grid(m, n):
             y1 = y_offset + CELL_SIZE * col
             x2 = x1 + CELL_SIZE
             y2 = y1 + CELL_SIZE
-            rectangle = C.create_rectangle(x1, y1, x2, y2, fill="white", outline="grey")
+            C.create_rectangle(x1, y1, x2, y2, fill="white", outline="grey")
 
 # Gets the coordinates for which cell to place a specified token when clicked
 def get_cell(event):
@@ -108,7 +121,7 @@ def place_token(row, col):
     if len(tokens) >= dim :    # maximum num of tokens has been placed
         return
     elif len(tokens) == dim - 1:
-        #Make draggable
+        # Make draggable
         C.bind("<Button-1>", on_drag_start)
         C.bind("<B1-Motion>", on_drag)
         C.bind("<ButtonRelease-1>", on_release)
@@ -122,37 +135,42 @@ def place_token(row, col):
     tokens.append((row, col))
     matrix[row][col] = 1
 
-#gets starting position when first trying to drag
+# gets starting position when first trying to drag
 def on_drag_start(event):
     w = event.widget
     if (len(C.find_withtag("current")) == 0):
         return
     item = C.find_withtag("current")[0]
+
     if (C.type(item) != "oval"):
         w._clicked_id = -1
         return
+    
     w._clicked_id = item
     w._col = round((event.x - x_offset - CELL_SIZE // 2) / CELL_SIZE)
     w._row = round((event.y - y_offset - CELL_SIZE // 2) / CELL_SIZE)
-    print(w._col)
-    print(w._row)
 
-#has the token track mouse movement
+    print("column: ", w._col + 1)
+    print("row: ", w._row + 1)
+
+# has the token track mouse movement
 def on_drag(event):
     w = event.widget
     if (w._clicked_id == -1):
         return
+    
     r = CELL_SIZE // 3
     C.coords(w._clicked_id, event.x - r, event.y - r, event.x + r, event.y + r)
 
 def on_release(event):
     w = event.widget
-    if (w._clicked_id == -1):
+    if (w._clicked_id == -1 ):
         return
+    
     new_col = round((event.x - x_offset - CELL_SIZE // 2) / CELL_SIZE)
     new_row = round((event.y - y_offset - CELL_SIZE // 2) / CELL_SIZE)
+
     if (new_col != w._col and new_row != w._row) or (matrix[new_row][new_col] == 1):
-        print("pls help")
         cell_x = x_offset + w._col * CELL_SIZE + CELL_SIZE //2
         cell_y = y_offset + w._row * CELL_SIZE + CELL_SIZE //2
         r = CELL_SIZE //3
@@ -169,8 +187,6 @@ def on_release(event):
         C.coords(w._clicked_id, cell_x - r, cell_y - r, cell_x + r, cell_y + r)
         w._clicked_id = -1
         validate_basis()
-        
-        
 
 
 # get n and m entries on sidebar
