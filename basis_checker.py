@@ -8,7 +8,7 @@ from tkinter import *
 root = tk.Tk()
 root.title("Basis Checker")
 
-C = tk.Canvas(root, bg="white",height = 600, width = 1000)
+C = tk.Canvas(root, bg="white",height = 800, width = 1000)
 C.grid(row=0, column=0)
 
 # to get entires to appear on the side of the grid
@@ -20,7 +20,7 @@ n_var = tk.IntVar() # number of columns
 m_var = tk.IntVar() # number of rows
 x_offset = 0
 y_offset = 0
-CELL_SIZE = 70
+CELL_SIZE = 60
 dim = 0     # dimension = number of tokens that can be placed
 
 # Calculate the dimension, the number of tokens we can place 
