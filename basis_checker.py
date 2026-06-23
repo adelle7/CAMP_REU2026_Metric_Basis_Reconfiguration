@@ -20,7 +20,7 @@ n_var = tk.IntVar() # number of columns
 m_var = tk.IntVar() # number of rows
 x_offset = 0
 y_offset = 0
-CELL_SIZE = 60
+CELL_SIZE = 80
 dim = 0     # dimension = number of tokens that can be placed
 
 # Calculate the dimension, the number of tokens we can place 
@@ -194,7 +194,6 @@ def on_release(event):
         validate_basis()
 
 def highlight(x,y):
-    print("oiujwefoijwegoij")
     print(x,y)
     rect = C.find_closest(x,y-(CELL_SIZE))[0]
     item_type = C.type(rect)
