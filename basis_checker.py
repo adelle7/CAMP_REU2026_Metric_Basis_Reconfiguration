@@ -111,7 +111,8 @@ def get_cell(event):
     row = min(row, m_var.get() - 1)
     
     if high_state.get() == 1:
-        highlight(event.x_root,event.y_root)
+        print(event.widget)
+        highlight(event.x,event.y)
 
     if (0 <= col < n_var.get() and 0 <= row < m_var.get()) and high_state.get()== 0:
         place_token(row, col)
@@ -140,7 +141,7 @@ def place_token(row, col):
 # gets starting position when first trying to drag
 def on_drag_start(event):
     if high_state.get() == 1:
-        highlight(event.x_root,event.y_root)
+        highlight(event.x,event.y)
     else:
         w = event.widget
         if (len(C.find_withtag("current")) == 0):
@@ -195,12 +196,10 @@ def on_release(event):
 
 def highlight(x,y):
     print(x,y)
-    rect = C.find_closest(x,y-(CELL_SIZE))[0]
-    item_type = C.type(rect)
-    item_tags = C.gettags(rect)
-    print(rect,item_tags,item_type)
-    if item_type == 'rectangle':
-        C.itemconfig(rect,fill="white") if C.itemcget(rect, "fill") == 'yellow' else C.itemconfig(rect,fill="yellow")
+    rect = C.find_closest(x, y)[0]
+    if C.type(rect) == 'rectangle':
+        current = C.itemcget(rect, "fill")
+        C.itemconfig(rect, fill="white" if current == "yellow" else "yellow")
             
 # get n and m entries on sidebar
 n_label = tk.Label(sidebar, text = "n (columns, must be >= m): ").grid(row=0, column=0)
